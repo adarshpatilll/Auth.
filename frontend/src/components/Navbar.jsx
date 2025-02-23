@@ -11,11 +11,11 @@ const Navbar = () => {
 	);
 
 	const logoutHandler = async () => {
-      try {
-         const response = await Axios.post("/auth/logout");
+		try {
+			const response = await Axios.post("/auth/logout");
 			toast.success(response.data.message);
 			localStorage.removeItem("token");
-         navigate("/login");
+			navigate("/login");
 		} catch (error) {
 			console.log(error);
 			toast.error(error.response.data.message);
@@ -23,8 +23,13 @@ const Navbar = () => {
 	};
 
 	useEffect(() => {
-		setIsAuthenticated(!!localStorage.getItem("token"));
-	}, [localStorage.getItem("token")]);
+		const handleStorageChange = () => {
+			setIsAuthenticated(!!localStorage.getItem("token"));
+		};
+
+		window.addEventListener("storage", handleStorageChange);
+		return () => window.removeEventListener("storage", handleStorageChange);
+	}, []);
 
 	return (
 		<div className="w-full h-16 bg-neutral-800 flex justify-between items-center px-10 sticky top-0 left-0 shadow-md z-50">

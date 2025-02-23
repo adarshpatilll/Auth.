@@ -13,15 +13,6 @@ import OtpVerificationPage from "./pages/ForgotPasswordFolder/OtpVerificationPag
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
-	const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-	useEffect(() => {
-		const token = localStorage.getItem("token");
-		if (token) {
-			setIsAuthenticated(true);
-		}
-	}, []);
-
 	return (
 		<div
 			className="h-screen w-full flex flex-col bg-neutral-900 text-white relative"
@@ -35,16 +26,8 @@ const App = () => {
 				<Route path="/forgot-password" element={<ForgotPasswordPage />} />
 				<Route path="/reset-password" element={<ResetPasswordPage />} />
 				<Route path="/otp-verification" element={<OtpVerificationPage />} />
+				<Route path="/" element={<HomePage />} />
 
-				<Route
-					path="/"
-					element={
-						<ProtectedRoute isAuthenticated={isAuthenticated}>
-							<HomePage />
-						</ProtectedRoute>
-					}
-				/>
-            
 				<Route path="*" element={<NotFound />} />
 			</Routes>
 
