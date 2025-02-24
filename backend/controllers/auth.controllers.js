@@ -63,9 +63,6 @@ export const loginController = asyncHandler(async (req, res) => {
 });
 
 export const logoutController = asyncHandler(async (req, res) => {
-   if (!req.cookies?.token) {
-      throw new ApiError(400, "You’re already logged  out.");
-   }
 
    res.clearCookie("token");
 
