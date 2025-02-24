@@ -10,7 +10,7 @@ import cookieParser from "cookie-parser";
 const app = express();
 app.use(
    cors({
-      origin: process.env.FRONTEND_URL,
+      origin: process.env.NODE_ENV === "development" ? process.env.LOCAL_FRONTEND_URL : process.env.VERCEL_FRONTEND_URL ,
       credentials: true,
    })
 );
