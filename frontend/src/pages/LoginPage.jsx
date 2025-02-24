@@ -6,12 +6,16 @@ import Axios from "../utils/Axios";
 import { IoMdLogIn } from "react-icons/io";
 import { PiEyeBold, PiEyeClosedBold } from "react-icons/pi";
 import { AuthContext } from "../context/AuthContext";
+import CircularLoader from "../components/CircularLoader";
 
 const LoginPage = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
+	const [loading, setLoading] = useState(false);
+
 	const { login } = useContext(AuthContext);
+
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -24,14 +28,17 @@ const LoginPage = () => {
 		e.preventDefault();
 
 		try {
+			setLoading(true);
 			const response = await Axios.post("/auth/login", { email, password });
 
 			toast.success(response.data.message);
-			login(response.data.data.token); // ✅ Updates AuthContext
+			login(response.data.data.token);
 			navigate("/");
 		} catch (error) {
 			console.log(error);
 			toast.error(error.response?.data?.message || "Login failed");
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -87,16 +94,16 @@ const LoginPage = () => {
 
 					<p
 						onClick={() => navigate("/forgot-password")}
-						className="text-sm cursor-pointer hover:text-neutral-200 transition-colors"
+						className="text-sm cursor-pointer hover:text-neutral-200 transition-colors text-right"
 					>
 						Forgot Password?
 					</p>
 
 					<div
 						onClick={handleSubmit}
-						className="bg-red-500 text-white text-center text-lg font-medium py-1.5 rounded cursor-pointer hover:bg-red-600 transition-colors"
+						className="bg-red-500 text-white text-center flex items-center justify-center gap-2 text-lg font-medium py-1.5 rounded cursor-pointer hover:bg-red-600 transition-colors"
 					>
-						Login
+						{loading && <CircularLoader tailwindcss="border-neutral-300 border-t-neutral-500" />} Login
 					</div>
 
 					<div className="text-sm text-center">

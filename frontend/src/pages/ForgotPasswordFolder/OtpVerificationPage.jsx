@@ -3,11 +3,14 @@ import { TbPasswordFingerprint } from "react-icons/tb";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Axios from "../../utils/Axios";
+import CircularLoader from "../../components/CircularLoader";
 
 const OtpVerificationPage = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const inputRef = useRef([]);
+
+	const [loading, setLoading] = useState(false);
 
 	const email = location?.state?.email || "";
 
@@ -36,6 +39,7 @@ const OtpVerificationPage = () => {
 		e.preventDefault();
 
 		try {
+			setLoading(true);
 			const response = await Axios.put("/auth/verify-forgot-password-otp", {
 				email,
 				OTP: otp.join("").toString(),
@@ -43,8 +47,9 @@ const OtpVerificationPage = () => {
 			toast.success(response.data.message);
 			navigate("/reset-password", { state: { email, OTP: otp.join("") } });
 		} catch (error) {
-			console.log(error);
 			toast.error(error.response.data.message);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -79,7 +84,10 @@ const OtpVerificationPage = () => {
 							/>
 						))}
 					</div>
-					<button className="bg-green-700 rounded py-2 text-lg font-semibold hover:bg-green-800 transition-all">
+					<button className="bg-green-700 rounded py-2 text-lg font-semibold flex items-center justify-center gap-2 hover:bg-green-800 transition-all">
+						{loading && (
+							<CircularLoader tailwindcss="border-neutral-300 border-t-neutral-600" />
+						)}{" "}
 						Verify OTP
 					</button>
 				</form>

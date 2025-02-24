@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { PiLockKeyBold } from "react-icons/pi";
 import { toast } from "react-toastify";
 import Axios from "../../utils/Axios";
+import CircularLoader from "../../components/CircularLoader";
 
 const ForgotPasswordPage = () => {
 	const [email, setEmail] = useState("");
+   const [loading, setLoading] = useState(false);
 
 	const navigate = useNavigate();
 
@@ -13,12 +15,15 @@ const ForgotPasswordPage = () => {
 		e.preventDefault();
 
 		try {
+         setLoading(true);
 			const response = await Axios.put("/auth/forgot-password", { email });
 			toast.success(response.data.message);
 			navigate("/otp-verification", { state: { email } });
 		} catch (error) {
 			toast.error(error.response.data.message);
-		}
+		} finally {
+         setLoading(false);
+      }
 	};
 
 	useEffect(() => {
@@ -53,8 +58,8 @@ const ForgotPasswordPage = () => {
 							className="bg-neutral-700 rounded outline-none px-3 py-2 placeholder:text-sm placeholder:text-neutral-400 placeholder:tracking-wide"
 						/>
 					</div>
-					<button className="bg-green-700 rounded py-2 text-lg font-semibold hover:bg-green-800 transition-all">
-						Send OTP
+					<button className="bg-green-700 rounded py-2 text-lg font-semibold flex items-center justify-center gap-2 hover:bg-green-800 transition-all">
+						{loading && <CircularLoader tailwindcss="border-neutral-300 border-t-neutral-600" />} Send OTP
 					</button>
 				</form>
 			</div>

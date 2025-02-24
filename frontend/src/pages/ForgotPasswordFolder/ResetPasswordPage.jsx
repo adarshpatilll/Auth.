@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import Axios from "../../utils/Axios";
 import { PiEyeBold, PiEyeClosedBold } from "react-icons/pi";
 import PasswordValidation from "../../components/PasswordValidation";
+import CircularLoader from "../../components/CircularLoader";
 
 const ResetPasswordPage = () => {
 	const [password, setPassword] = useState("");
@@ -12,6 +13,8 @@ const ResetPasswordPage = () => {
 
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+   const [loading, setLoading] = useState(false);  
 
 	const [isPasswordValid, setIsPasswordValid] = useState(false);
 
@@ -27,6 +30,7 @@ const ResetPasswordPage = () => {
 		}
 
 		try {
+         setLoading(true);
 			const response = await Axios.put("/auth/reset-password", {
 				email: location?.state?.email,
 				OTP: location?.state?.OTP,
@@ -36,7 +40,9 @@ const ResetPasswordPage = () => {
 			navigate("/login");
 		} catch (error) {
 			toast.error(error.response.data.message);
-		}
+		} finally {
+         setLoading(false);
+      }
 	};
 
 	useEffect(() => {
@@ -126,13 +132,13 @@ const ResetPasswordPage = () => {
 
 					<button
 						disabled={!isPasswordValid}
-						className={`bg-neutral-100 mt-2 text-black text-center text-lg font-medium py-1.5 rounded transition-colors ${
+						className={`bg-neutral-100 mt-2 text-black flex items-center justify-center gap-2 text-center text-lg font-medium py-1.5 rounded transition-colors ${
 							!isPasswordValid
 								? "opacity-50 cursor-not-allowed"
 								: "hover:bg-neutral-300 cursor-pointer"
 						}`}
 					>
-						Reset Password
+						{loading && <CircularLoader tailwindcss="border-neutral-400 border-t-neutral-800" />} Reset Password
 					</button>
 				</form>
 			</div>

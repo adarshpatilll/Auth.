@@ -7,15 +7,17 @@ import { RiAccountCircleLine } from "react-icons/ri";
 import { PiEyeBold } from "react-icons/pi";
 import { PiEyeClosedBold } from "react-icons/pi";
 import PasswordValidation from "../components/PasswordValidation";
+import CircularLoader from "../components/CircularLoader";
 
 const RegisterPage = () => {
 	const [email, setEmail] = useState("");
 	const [fullname, setFullname] = useState("");
 	const [password, setPassword] = useState("");
-   const [confirmPassword, setConfirmPassword] = useState("");
+	const [confirmPassword, setConfirmPassword] = useState("");
+	const [loading, setLoading] = useState(false);
 
 	const [showPassword, setShowPassword] = useState(false);
-   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
 	const [isPasswordValid, setIsPasswordValid] = useState(false);
 
@@ -31,6 +33,7 @@ const RegisterPage = () => {
 		e.preventDefault();
 
 		try {
+			setLoading(true);
 			const response = await Axios.post("/auth/register", {
 				email,
 				name: fullname,
@@ -41,6 +44,8 @@ const RegisterPage = () => {
 			navigate("/login");
 		} catch (error) {
 			toast.error(error.response.data.message);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -150,13 +155,13 @@ const RegisterPage = () => {
 					<button
 						onClick={handleSubmit}
 						disabled={!isPasswordValid}
-						className={`bg-neutral-100 mt-2 text-black text-center text-lg font-medium py-1.5 rounded transition-colors ${
+						className={`bg-neutral-100 mt-2 flex items-center justify-center gap-2 text-black text-center text-lg font-medium py-1.5 rounded transition-colors ${
 							!isPasswordValid
 								? "opacity-50 cursor-not-allowed"
 								: "hover:bg-neutral-300 cursor-pointer"
 						}`}
 					>
-						Register
+						{loading && <CircularLoader tailwindcss="border-neutral-100 border-t-neutral-700" />}Register
 					</button>
 
 					<div className="flex justify-center items-center">
