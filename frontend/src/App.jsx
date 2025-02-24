@@ -10,7 +10,6 @@ import NotFound from "./pages/NotFound";
 import ForgotPasswordPage from "./pages/ForgotPasswordFolder/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ForgotPasswordFolder/ResetPasswordPage";
 import OtpVerificationPage from "./pages/ForgotPasswordFolder/OtpVerificationPage";
-import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
 	return (
