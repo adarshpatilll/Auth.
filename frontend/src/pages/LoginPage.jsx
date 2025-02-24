@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import Divider from "../components/Divider";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Axios from "../utils/Axios";
 import { IoMdLogIn } from "react-icons/io";
-import { PiEyeBold } from "react-icons/pi";
-import { PiEyeClosedBold } from "react-icons/pi";
+import { PiEyeBold, PiEyeClosedBold } from "react-icons/pi";
+import { AuthContext } from "../context/AuthContext";
 
 const LoginPage = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
-
+	const { login } = useContext(AuthContext);
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -24,21 +24,15 @@ const LoginPage = () => {
 		e.preventDefault();
 
 		try {
-			const response = await Axios.post("/auth/login", {
-				email,
-				password,
-			});
+			const response = await Axios.post("/auth/login", { email, password });
+
 			toast.success(response.data.message);
-			localStorage.setItem("token", response.data.data.token);
+			login(response.data.data.token); // ✅ Updates AuthContext
 			navigate("/");
 		} catch (error) {
 			console.log(error);
-			toast.error(error.response.data.message);
+			toast.error(error.response?.data?.message || "Login failed");
 		}
-	};
-
-	const handleForgotPassword = () => {
-		navigate("/forgot-password");
 	};
 
 	return (
@@ -91,14 +85,12 @@ const LoginPage = () => {
 						</div>
 					</div>
 
-					<div className="flex items-end flex-col gap-2">
-						<p
-							onClick={handleForgotPassword}
-							className="text-sm cursor-pointer hover:text-neutral-200 transition-colors"
-						>
-							Forgot Password?
-						</p>
-					</div>
+					<p
+						onClick={() => navigate("/forgot-password")}
+						className="text-sm cursor-pointer hover:text-neutral-200 transition-colors"
+					>
+						Forgot Password?
+					</p>
 
 					<div
 						onClick={handleSubmit}
@@ -107,17 +99,11 @@ const LoginPage = () => {
 						Login
 					</div>
 
-					<div className="flex justify-center items-center">
-						<Divider />
-						<p className="text-sm px-2">or</p>
-						<Divider />
-					</div>
-
 					<div className="text-sm text-center">
-						Don't have an account.{" "}
+						Don't have an account?{" "}
 						<span
 							onClick={() => navigate("/register")}
-							className="text-blue-400 text-sm text-center cursor-pointer transition-colors"
+							className="text-blue-400 cursor-pointer transition-colors"
 						>
 							Register
 						</span>

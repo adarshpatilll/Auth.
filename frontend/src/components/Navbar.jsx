@@ -1,35 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import Axios from "../utils/Axios";
 import { toast } from "react-toastify";
+import { AuthContext } from "../context/AuthContext";
 
 const Navbar = () => {
 	const navigate = useNavigate();
-
-	const [isAuthenticated, setIsAuthenticated] = useState(
-		!!localStorage.getItem("token")
-	);
+	const { isAuthenticated, logout } = useContext(AuthContext);
 
 	const logoutHandler = async () => {
 		try {
-			const response = await Axios.post("/auth/logout");
-			toast.success(response.data.message);
-			localStorage.removeItem("token");
+			await Axios.post("/auth/logout");
+			logout();
+			toast.success("Logged out successfully!");
 			navigate("/login");
 		} catch (error) {
-			console.log(error);
-			toast.error(error.response.data.message);
+			toast.error(error.response?.data?.message || "Logout failed");
 		}
 	};
-
-	useEffect(() => {
-		const handleStorageChange = () => {
-			setIsAuthenticated(!!localStorage.getItem("token"));
-		};
-
-		window.addEventListener("storage", handleStorageChange);
-		return () => window.removeEventListener("storage", handleStorageChange);
-	}, []);
 
 	return (
 		<div className="w-full h-16 bg-neutral-800 flex justify-between items-center px-10 sticky top-0 left-0 shadow-md z-50">
